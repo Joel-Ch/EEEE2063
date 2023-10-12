@@ -1,8 +1,34 @@
 #include "math.h"
 #include "stdio.h"
+#include <iostream>
 
+//---------------------------------------------------------------------------
+unsigned long int factorial(int n)
+{
+    unsigned long int v(1);
+    for (int i = 2; i <= n; i++)
+        v *= i;
+    return (v);
+}
+//---------------------------------------------------------------------------
+void get_next_route(const int permutation, const int no_objects, int *const route)
+{
+    // Each value of permutation is a different route in the range 0<= permutation < no_objects!
+    for (unsigned int j = 0; j < no_objects; j++)
+        route[j] = j;
+    unsigned long int ft = 1;
+    for (unsigned int j = 2; j <= no_objects; j++)
+    {
+        ft *= j - 1;
+        int s = j - ((permutation / ft) % j);
+        int tmp = route[s - 1];
+        route[s - 1] = route[j - 1];
+        route[j - 1] = tmp;
+    }
+}
+//--------------------------------------------------------------------------
 
-//function to calculate the distance between two points
+// function to calculate the distance between two points
 
 // inputs are the x and y coordinates of the two points
 
@@ -12,10 +38,10 @@
 
 // copyright Joel Chiappetti
 
-double distanceBetweenLocations(double x1, double y1, double x2, double y2) {
+double distanceBetweenLocations(double x1, double y1, double x2, double y2)
+{
     return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
-
 
 // function to calculate the total distance of a route
 
@@ -26,26 +52,27 @@ double distanceBetweenLocations(double x1, double y1, double x2, double y2) {
 // required header file: math.h
 
 template <size_t N>
+// allows it to work for any length of array
 float totalDistanceOfRoute(float xCoordOfPossibleLocations[N], float yCoordOfPossibleLocations[N], int (&orderedLocationsVisitedOnThisRoute)[N])
 {
-    constexpr size_t arrSize = N;
-
     float totalDistance = 0;
-    for (size_t i = 0; i < arrSize - 1; i++)
+    // start at zero
+    for (size_t i = 0; i < N; i++)
     {
         int j = orderedLocationsVisitedOnThisRoute[i];
         int k = orderedLocationsVisitedOnThisRoute[i + 1];
-        totalDistance += distanceBetweenLocations(xCoordOfPossibleLocations[j], yCoordOfPossibleLocations[j], 
+        // define this point and the next point
+        totalDistance += distanceBetweenLocations(xCoordOfPossibleLocations[j], yCoordOfPossibleLocations[j],
                                                   xCoordOfPossibleLocations[k], yCoordOfPossibleLocations[k]);
-        printf("total on round %i : %f Coords:%f,%f\n", orderedLocationsVisitedOnThisRoute[i], totalDistance, xCoordOfPossibleLocations[j], yCoordOfPossibleLocations[j]);
+        // add the distance between the two points to the total distance
+        // printf("\nGoing from %i to %i: Running Total: %f", j, k, totalDistance);
+        // print the running total
     }
-    
 
     return totalDistance;
 }
 
 // sample main for testing purposes
-
 
 // int main()
 // {
@@ -60,44 +87,34 @@ float totalDistanceOfRoute(float xCoordOfPossibleLocations[N], float yCoordOfPos
 
 int main()
 {
-    float xCoordsArray[10]        = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    float yCoordsArray[10]        = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    int orderedLocationsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    float xCoordsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    float yCoordsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int orderedLocationsFromUser[4];
 
-    int newLocationOrdersArray[5] = {};
-
-    for (size_t i = 0; i < sizeof(orderedLocationsArray)/sizeof(orderedLocationsArray[0]); i++)
+    printf("Please enter a sequence of locations: ");
+    for (unsigned int i = 0; i < 5; i++)
     {
-        printf("Location %i : (%f, %f)\n", orderedLocationsArray[i], xCoordsArray[i], yCoordsArray[i]);
+        scanf("%i", &orderedLocationsFromUser[i]);
+        if (orderedLocationsFromUser[i] > 9 || orderedLocationsFromUser[i] < 0)
+        {
+            orderedLocationsFromUser[i] = 0;
+        }
+    }
+    printf("Locations: ");
+    for (size_t i = 0; i < 5; i++)
+    {
+        printf("%i ", orderedLocationsFromUser[i]);
     }
 
-    bool exitVar = 0;
-    do
+    float totalDistance = totalDistanceOfRoute(xCoordsArray, yCoordsArray, orderedLocationsFromUser);
+
+    printf("\nTotal distance of route is %f\n", totalDistance);
+
+    // Initialise an array route with N integer locations where N is the size of the route array
+    for (size_t i = 0; i < N-1; i++)
     {
-        size_t i = 0;
-        int newLocation;
-        scanf("Please enter location to visit: %i", &newLocation);
-        
-        if (newLocation > 10)
-        {
-            printf("error: value too high\n");
-        }
-        else if (newLocation> 0 && newLocation<10)
-        {
-            newLocationOrdersArray[i] = newLocation;
-        }
-        
-        else if (newLocation == 0)
-            exitVar = 1;
-        
+        get_next_route(i,N,route);
+    }
 
-    } while (exitVar != 1);
-    
-
-    float totalDistance = totalDistanceOfRoute(xCoordsArray, yCoordsArray, newLocationOrdersArray);
-
-    printf("Total distance of route is %f\n", totalDistance);
-    
     return 0;
-    
 }
