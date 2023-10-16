@@ -49,7 +49,7 @@ double get_pi(const double accuracy)
     int N = 0; // Number of "hits"
 
 // working variables
-    float x,y,randNum; 
+    float x, y; 
     double calculatedAccuracy;
 
 
@@ -59,13 +59,9 @@ double get_pi(const double accuracy)
 
     do
     {
-        // generate random x coordinate
-        randNum = rand()%100;
-        x=(randNum)/50 -1;
-
-        // generate random y coordinate
-        randNum = rand()%100;
-        y=(randNum)/50 -1;
+        // generate random x \& y coordinates
+        x = (float)(rand()%RAND_MAX)/(RAND_MAX/2) -1;
+        y = (float)(rand()%RAND_MAX)/(RAND_MAX/2)-1;
         
         //check if within the circle
         if (sqrt(x*x+y*y) <= 1)
@@ -78,10 +74,10 @@ double get_pi(const double accuracy)
         // calculate accuracy
         calculatedAccuracy = 4/((float)D+1);
 
-        // printf("\nx=%f, y=%f, D=%d, N=%d, calculatedAccuracy=%f, pi=%f",x,y,D,N,calculatedAccuracy, 4* ((float)N / (float)D));
+        // printf("\nx=%10.7f, y=%10.7f, D=%7d, N=%7d, calculatedAccuracy=%7.7f, pi=%7.7f",x,y,D,N,calculatedAccuracy, 4* ((float)N / (float)D));
 
     // repeat while number of darts < 100 OR the accuracy estimate is too big
-    } while ((D < 100) || (calculatedAccuracy > accuracy));
+    } while ((D < 100) || (calculatedAccuracy >= accuracy));
 
     // since pi/4 = N/D
     // therefore pi = 4*(N/D)

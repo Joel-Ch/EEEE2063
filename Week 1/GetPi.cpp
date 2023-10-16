@@ -65,6 +65,7 @@ double get_pi(const double accuracy)
         // generate random y coordinate
         randNum = rand()%100;
         y=(randNum)/50 -1;
+        printf("%f, %f\n",y, x);
         
         //check if within the circle
         if (sqrt(x*x+y*y) < 1)

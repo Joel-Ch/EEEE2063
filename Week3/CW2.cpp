@@ -42,6 +42,7 @@ double distanceBetweenLocations(double x1, double y1, double x2, double y2)
 {
     return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
+// --------------------------------------------------------------------------
 
 // function to calculate the total distance of a route
 
@@ -71,6 +72,7 @@ float totalDistanceOfRoute(float xCoordOfPossibleLocations[N], float yCoordOfPos
 
     return totalDistance;
 }
+// --------------------------------------------------------------------------
 
 // sample main for testing purposes
 
@@ -89,7 +91,9 @@ int main()
 {
     float xCoordsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     float yCoordsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    int orderedLocationsFromUser[4];
+    int orderedLocationsFromUser[7];
+    orderedLocationsFromUser[0] = 0;
+    orderedLocationsFromUser[7] = 0;
 
     printf("Please enter a sequence of locations: ");
     for (unsigned int i = 0; i < 5; i++)
@@ -101,7 +105,7 @@ int main()
         }
     }
     printf("Locations: ");
-    for (size_t i = 0; i < 5; i++)
+    for (size_t i = 1; i < 7; i++)
     {
         printf("%i ", orderedLocationsFromUser[i]);
     }
@@ -110,11 +114,22 @@ int main()
 
     printf("\nTotal distance of route is %f\n", totalDistance);
 
+
+    int route[7] = orderedLocationsFromUser;
+    float minDistance = 0;
+    int minRoute[7];
     // Initialise an array route with N integer locations where N is the size of the route array
     for (size_t i = 0; i < N-1; i++)
     {
         get_next_route(i,N,route);
+        totalDistance = totalDistanceOfRoute(xCoordsArray, yCoordsArray, route);
+        if (totalDistance < minDistance)
+        {
+            minDistance = totalDistance;
+            minRoute = route;
+        }
     }
 
     return 0;
 }
+// --------------------------------------------------------------------------
