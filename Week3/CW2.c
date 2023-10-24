@@ -1,11 +1,11 @@
 #include "math.h"
 #include "stdio.h"
-#include <iostream>
+#include "float.h"
 
 //---------------------------------------------------------------------------
 unsigned long int factorial(int n)
 {
-    unsigned long int v(1);
+    unsigned long int v = 1;
     for (int i = 2; i <= n; i++)
         v *= i;
     return (v);
@@ -52,13 +52,11 @@ double distanceBetweenLocations(double x1, double y1, double x2, double y2)
 
 // required header file: math.h
 
-template <size_t N>
-// allows it to work for any length of array
-float totalDistanceOfRoute(float xCoordOfPossibleLocations[N], float yCoordOfPossibleLocations[N], int (&orderedLocationsVisitedOnThisRoute)[N])
+float totalDistanceOfRoute(float *xCoordOfPossibleLocations, float *yCoordOfPossibleLocations, int *orderedLocationsVisitedOnThisRoute)
 {
     float totalDistance = 0;
     // start at zero
-    for (size_t i = 0; i < N; i++)
+    for (size_t i = 0; i < (sizeof(orderedLocationsVisitedOnThisRoute) / sizeof(orderedLocationsVisitedOnThisRoute[0]))-1; i++)
     {
         int j = orderedLocationsVisitedOnThisRoute[i];
         int k = orderedLocationsVisitedOnThisRoute[i + 1];
@@ -89,15 +87,26 @@ float totalDistanceOfRoute(float xCoordOfPossibleLocations[N], float yCoordOfPos
 
 int main()
 {
-    float xCoordsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    float yCoordsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-    int orderedLocationsFromUser[7];
-    orderedLocationsFromUser[0] = 0;
-    orderedLocationsFromUser[7] = 0;
-
-    printf("Please enter a sequence of locations: ");
-    for (unsigned int i = 0; i < 5; i++)
+    float xCoordOfPossibleLocations[11]={0,9,6,7,1,21,7,11,5,9,8};
+    float yCoordOfPossibleLocations[11]={0,8,8,8,1,11,11,11,5,9,1};
+    int N;
+    for (int i = 0; i <= 11; i++)
     {
+        printf("Coordinates of location %2i: (%4.1f, %4.1f)\n", i, xCoordOfPossibleLocations[i], yCoordOfPossibleLocations[i]);
+    }
+    
+    printf("Please enter the length of the route: (0-5) ");
+    scanf("%i", &N);
+    N+=1;
+
+    int orderedLocationsFromUser[N];
+    orderedLocationsFromUser[0] = 0;
+    orderedLocationsFromUser[N] = 0;
+
+    printf("Please enter a sequence of locations: \n");
+    for (unsigned int i = 1; i < N; i++)
+    {
+        printf("Location %i: ", i);
         scanf("%i", &orderedLocationsFromUser[i]);
         if (orderedLocationsFromUser[i] > 9 || orderedLocationsFromUser[i] < 0)
         {
@@ -105,30 +114,41 @@ int main()
         }
     }
     printf("Locations: ");
-    for (size_t i = 1; i < 7; i++)
+    for (size_t i = 0; i <= N; i++)
     {
         printf("%i ", orderedLocationsFromUser[i]);
     }
 
-    float totalDistance = totalDistanceOfRoute(xCoordsArray, yCoordsArray, orderedLocationsFromUser);
+    float totalDistance = totalDistanceOfRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, orderedLocationsFromUser);
 
     printf("\nTotal distance of route is %f\n", totalDistance);
 
-
-    int route[7] = orderedLocationsFromUser;
-    float minDistance = 0;
-    int minRoute[7];
+    float minDistance = FLT_MAX;
+    int minRoute[N];
     // Initialise an array route with N integer locations where N is the size of the route array
-    for (size_t i = 0; i < N-1; i++)
+    for (size_t i = 0; i < N; i++)
     {
-        get_next_route(i,N,route);
-        totalDistance = totalDistanceOfRoute(xCoordsArray, yCoordsArray, route);
+        get_next_route(i, N-1, orderedLocationsFromUser);
+        totalDistance = totalDistanceOfRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, orderedLocationsFromUser);
+
         if (totalDistance < minDistance)
         {
             minDistance = totalDistance;
-            minRoute = route;
+            for (int j = 0; j <= N; j++)
+            {
+                minRoute[j] = orderedLocationsFromUser[j];
+            }
+            
         }
+
     }
+
+    printf("The shortest route is: ");
+    for (size_t i = 0; i <= N; i++)
+    {
+        printf("%i ", minRoute[i]);
+    }
+    printf("\nTotal distance of route is %f\n", minDistance);
 
     return 0;
 }
