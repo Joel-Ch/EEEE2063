@@ -79,9 +79,7 @@ float totalDistanceOfRoute(float *xCoordOfPossibleLocations, float *yCoordOfPoss
 //     float xCoordsArray[10]        = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 //     float yCoordsArray[10]        = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 //     int orderedLocationsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-
 //     float totalDistance = totalDistanceOfRoute(xCoordsArray, yCoordsArray, orderedLocationsArray);
-
 //     printf("Total distance of route is %f\n", totalDistance);
 // }
 
@@ -102,6 +100,7 @@ int main()
     int orderedLocationsFromUser[N];
     orderedLocationsFromUser[0] = 0;
     orderedLocationsFromUser[N] = 0;
+    // ensure 0th and Nth terms are zero (start and end at depot)
 
     printf("Please enter a sequence of locations: \n");
     for (unsigned int i = 1; i < N; i++)
@@ -111,26 +110,33 @@ int main()
         if (orderedLocationsFromUser[i] > 9 || orderedLocationsFromUser[i] < 0)
         {
             orderedLocationsFromUser[i] = 0;
+            // if input is not valid, set to zero
         }
     }
     printf("Locations: ");
     for (size_t i = 0; i <= N; i++)
     {
         printf("%i ", orderedLocationsFromUser[i]);
+        // debug print
     }
 
     float totalDistance = totalDistanceOfRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, orderedLocationsFromUser);
-
     printf("\nTotal distance of route is %f\n", totalDistance);
+    // more debug
+
 
     float minDistance = FLT_MAX;
     int minRoute[N];
+
     // Initialise an array route with N integer locations where N is the size of the route array
     for (size_t i = 0; i < N; i++)
     {
+        // use given function to get the next route
         get_next_route(i, N-1, orderedLocationsFromUser);
+        // calculate the total distance of the route
         totalDistance = totalDistanceOfRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, orderedLocationsFromUser);
 
+        // check if minimum
         if (totalDistance < minDistance)
         {
             minDistance = totalDistance;
@@ -142,7 +148,7 @@ int main()
         }
 
     }
-
+    // output from the function
     printf("The shortest route is: ");
     for (size_t i = 0; i <= N; i++)
     {
