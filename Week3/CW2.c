@@ -134,6 +134,7 @@ int main()
         if (orderedLocationsFromUser[i] > 9 || orderedLocationsFromUser[i] < 0)
         {
             orderedLocationsFromUser[i] = 0;
+            // if input is not valid, set to zero
         }
     }
 
@@ -155,6 +156,7 @@ int main()
 
         totalDistance = totalDistanceOfRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, OrderedRoute, userRouteLength);
 
+        // check if minimum
         if (totalDistance < minDistance)
         {
             minDistance = totalDistance;
