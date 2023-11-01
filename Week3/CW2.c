@@ -3,7 +3,7 @@
 #include "float.h"
 
 //---------------------------------------------------------------------------
-unsigned long int factorial(int n)
+unsigned long int factorial(unsigned const int n)
 {
     unsigned long int v = 1;
     for (int i = 2; i <= n; i++)
@@ -11,7 +11,7 @@ unsigned long int factorial(int n)
     return (v);
 }
 //---------------------------------------------------------------------------
-void get_next_route(const int permutation, const int no_objects, int *const route)
+void get_next_route(unsigned const int permutation, unsigned const int no_objects, unsigned int *const route)
 {
     // Each value of permutation is a different route in the range 0<= permutation < no_objects!
     for (unsigned int j = 0; j < no_objects; j++)
@@ -40,7 +40,7 @@ void get_next_route(const int permutation, const int no_objects, int *const rout
 
 // copyright Joel Chiappetti
 
-float distanceBetweenLocations(float x1, float y1, float x2, float y2)
+float distanceBetweenLocations(const float x1, const float y1, const float x2, const float y2)
 {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
@@ -59,9 +59,11 @@ float distanceBetweenLocations(float x1, float y1, float x2, float y2)
 
 // required header file: math.h
 
+// copyright Joel Chiappetti
+
 // NOTE: there is an additional input: the number of locations in the route
 
-float totalDistanceOfRoute(float *xCoordOfPossibleLocations, float *yCoordOfPossibleLocations, int *orderedLocationsVisitedOnThisRoute, int numberOfLocations)
+float totalDistanceOfRoute(const float *xCoordOfPossibleLocations, const float *yCoordOfPossibleLocations, const unsigned int *orderedLocationsVisitedOnThisRoute, const unsigned int numberOfLocations)
 {
     // from the "depot" to the first point
     float totalDistance = distanceBetweenLocations(0, 0, xCoordOfPossibleLocations[orderedLocationsVisitedOnThisRoute[0]],
@@ -89,6 +91,45 @@ float totalDistanceOfRoute(float *xCoordOfPossibleLocations, float *yCoordOfPoss
 // --------------------------------------------------------------------------
 
 
+// function to calculate the minimum distance of a route
+
+// inputs are the x and y coordinates of the possible locations, the ones that the user wants to visit, the number of locations in the route and a pointer to the minimum route
+
+// output is the minimum distance of the route
+
+// required header file: math.h
+
+// copyright Joel Chiappetti
+float GetMinimumRoute(const float *xCoordOfPossibleLocations, const float *yCoordOfPossibleLocations, unsigned const int *orderedLocationsFromUser,unsigned const int userRouteLength, unsigned int *minimumRoute)
+{
+    float minimumDistance = FLT_MAX;
+    float totalDistance = 0;
+    unsigned int RouteOrder[userRouteLength];
+    unsigned int OrderedRoute[userRouteLength];
+    // Initialise an array route with N integer locations where N is the size of the route array
+    for (size_t i = 0; i < factorial(userRouteLength); i++)
+    {
+        get_next_route(i, userRouteLength, RouteOrder);
+
+        for (size_t i = 0; i < userRouteLength; i++)
+        {
+            OrderedRoute[i] = orderedLocationsFromUser[RouteOrder[i]];
+        }
+
+        totalDistance = totalDistanceOfRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, OrderedRoute, userRouteLength);
+
+        // check if minimum
+        if (totalDistance < minimumDistance)
+        {
+            minimumDistance = totalDistance;
+            for (int j = 0; j < userRouteLength; j++)
+            {
+                minimumRoute[j] = OrderedRoute[j];
+            }
+        }
+    }
+    return minimumDistance;
+}
 
 // sample main for testing purposes
 
@@ -108,8 +149,8 @@ float totalDistanceOfRoute(float *xCoordOfPossibleLocations, float *yCoordOfPoss
 // user input main for testing purposes
 int main()
 {
-    float xCoordOfPossibleLocations[11] = {0, 9, 6, 7, 1, 21, 7, 11, 5, 9, 8};
-    float yCoordOfPossibleLocations[11] = {0, 8, 8, 8, 1, 11, 11, 11, 5, 9, 1};
+    const float xCoordOfPossibleLocations[11] = {0, 9, 6, 7, 1, 21, 7, 11, 5, 9, 8};
+    const float yCoordOfPossibleLocations[11] = {0, 8, 8, 8, 1, 11, 11, 11, 5, 9, 1};
     int userRouteLength = 0;
     // print the coordinates of the possible locations
     for (int i = 0; i < 11; i++)
@@ -123,7 +164,7 @@ int main()
     if (userRouteLength > 5 || userRouteLength <= 0)
         userRouteLength = 5;
 
-    int orderedLocationsFromUser[userRouteLength];
+    unsigned int orderedLocationsFromUser[userRouteLength];
 
     // get the locations in the route
     printf("Please enter a sequence of locations: \n");
@@ -138,39 +179,15 @@ int main()
         }
     }
 
+    // find minimum route and distance
+    unsigned int minimumRoute[userRouteLength];
+    float minimumDistance = GetMinimumRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, orderedLocationsFromUser, userRouteLength, minimumRoute);
 
-    float totalDistance = 0;
-    float minDistance = FLT_MAX;
-    int minRoute[userRouteLength];
-    int RouteOrder[userRouteLength];
-    int OrderedRoute[userRouteLength];
-    // Initialise an array route with N integer locations where N is the size of the route array
-    for (size_t i = 0; i < factorial(userRouteLength); i++)
-    {
-        get_next_route(i, userRouteLength, RouteOrder);
-
-        for (size_t i = 0; i < userRouteLength; i++)
-        {
-            OrderedRoute[i] = orderedLocationsFromUser[RouteOrder[i]];
-        }
-
-        totalDistance = totalDistanceOfRoute(xCoordOfPossibleLocations, yCoordOfPossibleLocations, OrderedRoute, userRouteLength);
-
-        // check if minimum
-        if (totalDistance < minDistance)
-        {
-            minDistance = totalDistance;
-            for (int j = 0; j < userRouteLength; j++)
-            {
-                minRoute[j] = OrderedRoute[j];
-            }
-        }
-    }
-
-    printf("The shortest possible distance to travel is %f which requires visiting in the order 0 ", minDistance);
+    // print the minimum distance and the route
+    printf("The shortest possible distance to travel is %f which requires visiting in the order 0 ", minimumDistance);
     for (size_t i = 0; i < userRouteLength; i++)
     {
-        printf("%i ", minRoute[i]);
+        printf("%i ", minimumRoute[i]);
     }
     printf("0\n");
 
