@@ -2,15 +2,236 @@
 #include "stdio.h"
 #include "float.h"
 
-//---------------------------------------------------------------------------
 
-// function to calculate the factorial of a number
+// --------------------------------------------------------------------------
+// Function declarations \& descriptions
+// --------------------------------------------------------------------------
 
-// input is the number
 
-// output is the factorial of the number
 
-// required header file: none
+/**
+ * Function: factorial
+ * -------------------
+ * This function calculates the factorial of a number.
+ *
+ * Input:
+ * - n: The number to calculate the factorial of.
+ *
+ * Output:
+ * - The function returns the factorial of the input number.
+ *
+ * Example:
+ * - If n = 5, the function returns 120.
+ * 
+ * Required header file:
+ * - None
+ */
+unsigned long int factorial(unsigned int n);
+
+/**
+ * Function: get_next_route
+ * ------------------------
+ * This function calculates the next route in the sequence.
+ *
+ * Inputs:
+ * - permutation: The current permutation.
+ * - no_objects: The number of objects.
+ * - route: A pointer to the route.
+ *
+ * Output:
+ * - The function modifies the route to represent the next permutation.
+ *
+ * Example:
+ * - If permutation = 3, no_objects = 4, and route points to an array [0, 1, 2, 3],
+ *   the function modifies the array to [0, 2, 1, 3].
+ * 
+ * Required header file: 
+ * - None
+ * 
+ * Reference: 
+ * https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
+ */
+void get_next_route(const unsigned int permutation, const unsigned int no_objects, unsigned int *const route);
+
+/**
+ * Function: distanceBetweenLocations
+ * ----------------------------------
+ * This function calculates the distance between two points.
+ *
+ * Inputs:
+ * - x1, y1: The x and y coordinates of the first point.
+ * - x2, y2: The x and y coordinates of the second point.
+ *
+ * Output:
+ * - The function returns the distance between the two points.
+ *
+ * Example:
+ * - If x1 = 1, y1 = 2, x2 = 4, y2 = 6, the function returns 5
+ * 
+ * Required header file:
+ * - math.h
+ * 
+ * Copyright Joel Chiappetti
+ */
+float distanceBetweenLocations(const float x1, const float y1, const float x2, const float y2);
+
+/**
+ * Function: totalDistanceOfRoute
+ * ------------------------------
+ * This function calculates the total distance of a route.
+ *
+ * Inputs:
+ * - xCoordOfPossibleLocations, yCoordOfPossibleLocations: The x and y coordinates of the possible locations.
+ * - orderedLocationsVisitedOnThisRoute: The order in which the locations are visited.
+ * - numberOfLocations: The number of locations in the route.
+ *
+ * Output:
+ * - The function returns the total distance of the route.
+ *
+ * Example:
+ * - If xCoordOfPossibleLocations = [0, 1, 2], yCoordOfPossibleLocations = [0, 1, 2],
+ *   orderedLocationsVisitedOnThisRoute = [0, 1, 2], and numberOfLocations = 3,
+ *   the function returns approximately 2.83.
+ * 
+ * Required header file:
+ * - math.h
+ * 
+ * NOTE: there is an additional input: the number of locations in the route
+ * 
+ * Copyright Joel Chiappetti
+ */
+float totalDistanceOfRoute(const float *xCoordOfPossibleLocations, const float *yCoordOfPossibleLocations, const unsigned int *orderedLocationsVisitedOnThisRoute, const unsigned int numberOfLocations);
+
+/**
+ * Function: GetMinimumRoute
+ * -------------------------
+ * This function calculates the minimum distance of a route.
+ *
+ * Inputs:
+ * - xCoordOfPossibleLocations, yCoordOfPossibleLocations: The x and y coordinates of the possible locations.
+ * - orderedLocationsFromUser: The locations that the user wants to visit.
+ * - userRouteLength: The number of locations in the route.
+ * - minimumRoute: A pointer to the minimum route.
+ *
+ * Output:
+ * - The function returns the minimum distance of the route.
+ * - The function also modifies the array pointed to by minimumRoute to represent the minimum route.
+ *
+ * Example:
+ * - If xCoordOfPossibleLocations = [0, 9, 6], yCoordOfPossibleLocations = [0, 8, 8],
+ *   orderedLocationsFromUser = [0, 1, 2], userRouteLength = 3, and minimumRoute points to an array [0, 0, 0],
+ *   the function returns approximately 25.04 and modifies the array pointed to by minimumRoute to [0, 1, 2].
+ * 
+ * Required header file:
+ * - math.h
+ * 
+ * Copyrght Joel Chiappetti
+ */
+float GetMinimumRoute(const float *xCoordOfPossibleLocations, const float *yCoordOfPossibleLocations, unsigned const int *orderedLocationsFromUser, unsigned const int userRouteLength, unsigned int *minimumRoute);
+
+/**
+ * Function: getUserInput
+ * ----------------------
+ * This function prompts the user to enter an integer within a specified range.
+ * It validates the input and keeps prompting until a valid input is entered.
+ *
+ * Inputs:
+ * - min: The minimum acceptable value for the input.
+ * - max: The maximum acceptable value for the input.
+ *
+ * Output:
+ * - The function returns the valid input entered by the user.
+ *
+ * Example:
+ * - If min = 1 and max = 10, and the user enters 5, the function returns 5.
+ * - If the user enters a value outside the range or a non-integer, the function prompts the user to enter a valid input.
+ * 
+ * Required header file:
+ * - stdio.h
+ * 
+ * Copyright Joel Chiappetti
+ */
+int getUserInput(const unsigned int min, const unsigned int max);
+
+/**
+ * Function: main (task 2 sample version)
+ * --------------
+ * This would be the entry point of the program.
+ *
+ * The function initializes arrays for the x and y coordinates of the locations,
+ * and an array for the order in which the locations are visited.
+ * It then calculates the total distance of the route and prints it.
+ *
+ * Inputs:
+ * - None.
+ *
+ * Output:
+ * - The function returns 0 to indicate successful execution.
+ * - The function also prints the total distance of the route.
+ *
+ * Example:
+ * - The function initializes xCoordsArray = [0, 9, 6, 7, 1, 21, 7, 11, 5, 9, 8],
+ *   yCoordsArray = [0, 8, 8, 8, 1, 11, 11, 11, 5, 9, 1],
+ *   and orderedLocationsArray = [2, 3, 1, 4].
+ * - It then calculates the total distance of the route and prints it.
+ * 
+ * Required header file:
+ * - stdio.h
+ * 
+ * NOTE: this function is not used in the main program
+ * 
+ * Copyright Joel Chiappetti
+ */
+
+/**
+ * Function: main (task 3 version)
+ * --------------
+ * This is the entry point of the program.
+ *
+ * The function initializes arrays for the x and y coordinates of the locations,
+ * and an array for the order in which the locations are visited.
+ * It then prompts the user to enter the length of the route and the sequence of locations.
+ * The function calculates the minimum distance of the route and prints it along with the order of locations.
+ *
+ * Inputs:
+ * - None.
+ *
+ * Output:
+ * - The function returns 0 to indicate successful execution.
+ * - The function also prints the coordinates of the possible locations, prompts the user for input,
+ *   and prints the minimum distance of the route and the order of locations.
+ *
+ * Example:
+ * - The function initializes xCoordOfPossibleLocations = [0, 9, 6, 7, 1, 21, 7, 11, 5, 9, 8],
+ *   yCoordOfPossibleLocations = [0, 8, 8, 8, 1, 11, 11, 11, 5, 9, 1].
+ * - It then prompts the user to enter the length of the route and the sequence of locations.
+ * - The function calculates the minimum distance of the route and prints it along with the order of locations.
+ * 
+ * Test Data:
+ * - User Input: 4 followed by 1, 2, 3, 4
+ *   Output: The shortest possible distance to travel is 25.044359 which requires visiting in the order 0 2 3 1 4 0
+ * - User Input: 4 followed by 1, 4, 7, 9
+ *   Output: The shortest possible distance to travel is 31.203493 which requires visiting in the order 0 1 7 9 4 0
+ * 
+ * 
+ * Required header file: 
+ * - stdio.h
+ * 
+ * Copyright Joel Chiappetti
+ */
+int main();
+
+
+
+
+
+// --------------------------------------------------------------------------
+// Function definitions
+// --------------------------------------------------------------------------
+
+
+
+
 
 unsigned long int factorial(unsigned int n)
 {
@@ -19,17 +240,8 @@ unsigned long int factorial(unsigned int n)
         v *= i;
     return (v);
 }
-//---------------------------------------------------------------------------
 
-// function to calculate the next route in the sequence
-
-// inputs are the current permutation, the number of objects and a pointer to the route
-
-// output is the next permutation
-
-// required header file: none
-
-// reference: https://en.wikipedia.org/wiki/Permutation#Generation_in_lexicographic_order
+// --------------------------------------------------------------------------
 
 void get_next_route(const unsigned int permutation, const unsigned int no_objects, unsigned int *const route)
 {
@@ -46,17 +258,8 @@ void get_next_route(const unsigned int permutation, const unsigned int no_object
         route[j - 1] = tmp;
     }
 }
-//--------------------------------------------------------------------------
 
-// function to calculate the distance between two points
-
-// inputs are the x and y coordinates of the two points
-
-// output is the distance between the two points
-
-// required header file: math.h
-
-// copyright Joel Chiappetti
+// --------------------------------------------------------------------------
 
 float distanceBetweenLocations(const float x1, const float y1, const float x2, const float y2)
 {
@@ -64,20 +267,6 @@ float distanceBetweenLocations(const float x1, const float y1, const float x2, c
 }
 
 // --------------------------------------------------------------------------
-
-// function to calculate the total distance of a route
-
-// inputs are the x and y coordinates of the possible locations, and the order in which they are visited
-
-// also calculates the distance from the "depot" (location 0) to the first point, and from the last point back to the "depot"
-
-// output is the total distance of the route
-
-// required header file: math.h
-
-// copyright Joel Chiappetti
-
-// NOTE: there is an additional input: the number of locations in the route
 
 float totalDistanceOfRoute(const float *xCoordOfPossibleLocations, const float *yCoordOfPossibleLocations, const unsigned int *orderedLocationsVisitedOnThisRoute, const unsigned int numberOfLocations)
 {
@@ -105,18 +294,6 @@ float totalDistanceOfRoute(const float *xCoordOfPossibleLocations, const float *
 }
 
 // --------------------------------------------------------------------------
-
-// function to calculate the minimum distance of a route
-
-// inputs are the x and y coordinates of the possible locations, the locations that the user wants to visit, the number of locations in the route and a pointer to the minimum route
-
-// output is the minimum distance of the route
-
-// the function also saves the minimum route in the array pointed to by the pointer
-
-// required header file: math.h
-
-// copyright Joel Chiappetti
 
 float GetMinimumRoute(const float *xCoordOfPossibleLocations, const float *yCoordOfPossibleLocations, unsigned const int *orderedLocationsFromUser, unsigned const int userRouteLength, unsigned int *minimumRoute)
 {
@@ -157,25 +334,44 @@ float GetMinimumRoute(const float *xCoordOfPossibleLocations, const float *yCoor
     return minimumDistance;
 }
 
-// sample main for testing purposes
+// --------------------------------------------------------------------------
+
+int getUserInput(const unsigned int min, const unsigned int max)
+{
+    int userInput;
+    while (scanf("%i", &userInput) != 1 || userInput < min || userInput > max)
+    {
+        while(getchar() != '\n'); // clear the input buffer
+        printf("Invalid input. Please enter a number between %i and %i: ", min, max);
+    }
+    return userInput;
+}
+
+// --------------------------------------------------------------------------
+
+
+
+
+// --------------------------------------------------------------------------
+// Main functions
+// --------------------------------------------------------------------------
+
+
+
+
 
 // int main()
 // {
 //     float xCoordsArray[11]        = {0, 9, 6, 7, 1, 21, 7, 11, 5, 9, 8};
 //     float yCoordsArray[11]        = {0, 8, 8, 8, 1, 11, 11, 11, 5, 9, 1};
-//     int orderedLocationsArray[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+//     int orderedLocationsArray[4] = {2, 3, 1, 4};
 //     float totalDistance = totalDistanceOfRoute(xCoordsArray, yCoordsArray, orderedLocationsArray);
 //     printf("Total distance of route is %f\n", totalDistance);
+// 
+//     return 0;
 // }
+
 // --------------------------------------------------------------------------
-
-// user input main for testing purposes
-
-// asks user for the number of locations in the route and the locations in the route
-
-// Then calls the function GetMinimumRoute to calculate the minimum distance and the minimum route
-
-// print the minimum distance and the route
 
 int main()
 {
@@ -190,23 +386,15 @@ int main()
 
     // get the number of locations in the route
     printf("Please enter the length of the route: (1-5) ");
-    scanf("%i", &userRouteLength);
-    if (userRouteLength > 5 || userRouteLength <= 0)
-        userRouteLength = 5;
-
+    userRouteLength = getUserInput(1, 5);
     unsigned int orderedLocationsFromUser[userRouteLength];
 
     // get the locations in the route
     printf("Please enter a sequence of locations: \n");
     for (unsigned int i = 0; i < userRouteLength; i++)
     {
-        printf("Location %i: ", i + 1);
-        scanf("%i", &orderedLocationsFromUser[i]);
-        if (orderedLocationsFromUser[i] > 10 || orderedLocationsFromUser[i] < 0)
-        {
-            orderedLocationsFromUser[i] = 0;
-            // if input is not valid, set to zero
-        }
+        printf("Location %i: ", i);
+        orderedLocationsFromUser[i] = getUserInput(0, 10);
     }
 
     // find minimum route and distance
@@ -223,4 +411,5 @@ int main()
 
     return 0;
 }
+
 // --------------------------------------------------------------------------
