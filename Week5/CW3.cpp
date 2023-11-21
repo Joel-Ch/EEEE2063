@@ -14,8 +14,7 @@ public:
     ~pixel();                                                        // destructor
     pixel(const pixel &other);                                       // copy constructor
     pixel &operator=(const pixel &other);                            // copy assignment operator
-
-    pixel() : xCoordinate(0), yCoordinate(0), brightness(0) {}
+    pixel() : xCoordinate(0), yCoordinate(0), brightness(0) {}       // default constructor
 
     void changeCoordinate(float _xCoordinate, float _yCoordinate);
 
@@ -41,8 +40,7 @@ public:
     ~icon();                             // destructor
     icon(const icon &other);             // copy constructor
     icon &operator=(const icon &other);  // copy assignment operator
-
-    icon() : id(0) {} // default constructor
+    icon() : id(0) {}                    // default constructor
 
     int getId();
 
@@ -222,12 +220,6 @@ int icon::getId()
 
 pixel icon::getSpecifiedPixel(int _pixelIndex)
 {
-    if (_pixelIndex < 0 || _pixelIndex > 15)
-    {
-        cout << "ERROR - CANNOT GET SPECIFIED PIXEL: Invalid pixel index" << endl;
-        return pixel();
-    }
-
     return IconPixel[_pixelIndex];
 }
 
@@ -437,8 +429,6 @@ int main()
 
     initialiseAsDefaultDiagonalLine(allTheIcons[0]);
 
-    // allTheIcons[0].printIcon();
-
     Display1.addIcon(&allTheIcons[0]);
 
     Display2.addIcon(&allTheIcons[0]);
@@ -447,7 +437,7 @@ int main()
 
     Display2.displayIcon(0);
 
-    cout << "-------------------" << endl;
+    cout << "-------------------" << endl; // extra testing follows
 
     Display1.removeIcon(0);
 
