@@ -7,18 +7,18 @@ class pixel
 private:
     float xCoordinate;
     float yCoordinate;
-    char brightness;
+    unsigned char brightness;
 
 public:
-    pixel(float _xCoordinate, float _yCoordinate, char _brightness); // constructor
+    pixel(const float _xCoordinate,const float _yCoordinate,const unsigned char _brightness); // constructor
     ~pixel();                                                        // destructor
     pixel(const pixel &other);                                       // copy constructor
     pixel &operator=(const pixel &other);                            // copy assignment operator
     pixel() : xCoordinate(0), yCoordinate(0), brightness(0) {}       // default constructor
 
-    void changeCoordinate(float _xCoordinate, float _yCoordinate);
+    void changeCoordinate(const float _xCoordinate,const float _yCoordinate);
 
-    void changeBrightness(char _brightness);
+    void changeBrightness(const unsigned char _brightness);
 
     float getXCoordinate();
 
@@ -35,29 +35,31 @@ private:
     int id;
     pixel IconPixel[16];
 
+    void initialiseAsDefaultDiagonalLine();
 public:
-    icon(int _id, pixel _IconPixel[16]); // constructor
+    icon(const int _id, pixel _IconPixel[16]); // constructor
     ~icon();                             // destructor
     icon(const icon &other);             // copy constructor
     icon &operator=(const icon &other);  // copy assignment operator
-    icon() : id(0) {}                    // default constructor
+    icon() {initialiseAsDefaultDiagonalLine();}                   // default constructor
 
     int getId();
 
-    pixel getSpecifiedPixel(int _pixelIndex);
+    pixel getSpecifiedPixel(unsigned const char _pixelIndex);
 
-    void changeIcon(int _id, pixel _IconPixel[16]);
+    void changeIcon(const int _id, pixel _IconPixel[16]);
 
-    void changeSinglePixel(int _pixelIndex, pixel *_IconPixel);
+    void changeSinglePixel(unsigned const char _pixelIndex, pixel *_IconPixel);
 
-    void printIcon();
+    void showIconDetail();
+
 };
 
 class radarDisplay
 {
 private:
     icon *iconsToDisplay[100];
-    int noOfActiveIcons;
+    unsigned char noOfActiveIcons;
 
 public:
     radarDisplay();                                     // constructor
@@ -67,18 +69,16 @@ public:
 
     void addIcon(icon *_iconToAdd);
 
-    void removeIcon(int _iconId);
+    void removeIcon(const int _iconId);
 
-    void displayIcon(int _iconId);
+    void displayIcon(const int _iconId);
 };
 
 // ---------------------- Function Prototypes ----------------------
-void showPixelDetail(pixel thisPixel);
-void showIconDetail(icon *thisIcon);
 void initialiseAsDefaultDiagonalLine(icon &thisIcon);
 
 // ---------------------- Big Fours ----------------------
-pixel::pixel(float _xCoordinate, float _yCoordinate, char _brightness)
+pixel::pixel(const float _xCoordinate,const float _yCoordinate,const unsigned char _brightness)
 {
     xCoordinate = _xCoordinate;
     yCoordinate = _yCoordinate;
@@ -104,7 +104,7 @@ pixel &pixel::operator=(const pixel &other)
     return *this;
 }
 
-icon::icon(int _id, pixel _IconPixel[16])
+icon::icon(const int _id, pixel _IconPixel[16])
 {
     id = _id;
     for (int i = 0; i < 16; i++)
@@ -170,13 +170,13 @@ radarDisplay &radarDisplay::operator=(const radarDisplay &other)
 
 // ---------------------- Implementation ----------------------
 
-void pixel::changeCoordinate(float _xCoordinate, float _yCoordinate)
+void pixel::changeCoordinate(const float _xCoordinate, const float _yCoordinate)
 {
     xCoordinate = _xCoordinate;
     yCoordinate = _yCoordinate;
 }
 
-void pixel::changeBrightness(char _brightness)
+void pixel::changeBrightness(const unsigned char _brightness)
 {
     if (_brightness < 0 || _brightness > 15)
     {
@@ -218,12 +218,12 @@ int icon::getId()
     return id;
 }
 
-pixel icon::getSpecifiedPixel(int _pixelIndex)
+pixel icon::getSpecifiedPixel(unsigned const char _pixelIndex)
 {
     return IconPixel[_pixelIndex];
 }
 
-void icon::changeIcon(int _id, pixel _IconPixel[16])
+void icon::changeIcon(const int _id, pixel _IconPixel[16])
 {
     id = _id;
     for (int i = 0; i < 16; i++)
@@ -232,18 +232,27 @@ void icon::changeIcon(int _id, pixel _IconPixel[16])
     }
 }
 
-void icon::changeSinglePixel(int _pixelIndex, pixel *_IconPixel)
+void icon::changeSinglePixel(unsigned const char _pixelIndex, pixel *_IconPixel)
 {
     IconPixel[_pixelIndex] = *_IconPixel;
 }
 
-void icon::printIcon()
+void icon::showIconDetail()
 {
     cout << "id: " << id << endl;
     for (int i = 0; i < 16; i++)
     {
         cout << "Pixel " << i << endl;
         IconPixel[i].printPixel();
+    }
+}
+
+void icon::initialiseAsDefaultDiagonalLine()
+{
+    id = 7;
+    for (size_t i = 0; i < 16; i++)
+    {
+        IconPixel[i] = pixel(i, i, 15);
     }
 }
 
@@ -254,7 +263,7 @@ void radarDisplay::addIcon(icon *_iconToAdd)
     // Check if there is space for the icon
     if (noOfActiveIcons >= 100)
     {
-        cout << "ERROR - CANNOT ADD ICON: No more space for icons" << endl;
+        cout << "ERROR - CANNOT ADD ICON   : No more space for icons" << endl;
         return;
     }
 
@@ -263,7 +272,7 @@ void radarDisplay::addIcon(icon *_iconToAdd)
     {
         if (iconsToDisplay[i] != NULL && iconsToDisplay[i]->getId() == _iconToAdd->getId())
         {
-            cout << "ERROR - CANNOT ADD ICON: Duplicate icon ID: " << _iconToAdd->getId() << endl;
+            cout << "ERROR - CANNOT ADD ICON   : Duplicate icon ID: " << _iconToAdd->getId() << endl;
             return;
         }
     }
@@ -280,35 +289,38 @@ void radarDisplay::addIcon(icon *_iconToAdd)
     }
 }
 
-void radarDisplay::removeIcon(int _iconId)
+void radarDisplay::removeIcon(const int _iconId)
 {
     // Check if there are any active icons
     if (noOfActiveIcons <= 0)
     {
-        cout << "ERROR - CANNOT REMOVE ICON: No active icons" << endl;
+        cout << "ERROR - CANNOT REMOVE ICON : No active icons" << endl;
         noOfActiveIcons = 0;
         return;
     }
     bool iconFound = false;
     for (int i = 0; i < 100; i++)
     {
-        if (iconsToDisplay != NULL && iconsToDisplay[i]->getId() == _iconId)
+        if (iconsToDisplay != NULL)
         {
-            iconsToDisplay[i] = NULL;
-            iconFound = true;
-            noOfActiveIcons--;
-            break;
+            if (iconsToDisplay[i] != NULL && iconsToDisplay[i]->getId() == _iconId)
+            {
+                iconsToDisplay[i] = NULL;
+                iconFound = true;
+                noOfActiveIcons--;
+                break;
+            }
         }
     }
 
     // If no icon is found
     if (!iconFound)
     {
-        cout << "ERROR - CANNOT REMOVE ICON: Icon not found" << endl;
+        cout << "ERROR - CANNOT REMOVE ICON : Icon not found" << endl;
     }
 }
 
-void radarDisplay::displayIcon(int _iconId)
+void radarDisplay::displayIcon(const int _iconId)
 {
     // Check if there are any active icons
     if (noOfActiveIcons <= 0)
@@ -324,7 +336,7 @@ void radarDisplay::displayIcon(int _iconId)
     {
         if (iconsToDisplay[i] != NULL && iconsToDisplay[i]->getId() == _iconId)
         {
-            showIconDetail(iconsToDisplay[i]);
+            iconsToDisplay[i]->showIconDetail();
             iconFound = true;
             break;
         }
@@ -337,36 +349,6 @@ void radarDisplay::displayIcon(int _iconId)
     }
 }
 
-// ---------------------- Functions ----------------------
-
-void showPixelDetail(pixel thisPixel)
-{
-    cout << "xCoordinate: " << thisPixel.getXCoordinate() << endl;
-    cout << "yCoordinate: " << thisPixel.getYCoordinate() << endl;
-    cout << "brightness: " << (int)thisPixel.getBrightness() << endl;
-}
-
-void showIconDetail(icon *thisIcon)
-{
-    cout << "id: " << thisIcon->getId() << endl;
-    for (int i = 0; i < 16; i++)
-    {
-        cout << "Pixel " << i << endl;
-        showPixelDetail(thisIcon->getSpecifiedPixel(i));
-    }
-}
-
-void initialiseAsDefaultDiagonalLine(icon &thisIcon)
-{
-    pixel *pixelArray = new pixel[16];
-    for (size_t i = 0; i < 16; i++)
-    {
-        pixelArray[i] = pixel(i, i, 15);
-    }
-
-    thisIcon.changeIcon(0, pixelArray);
-    delete[] pixelArray;
-}
 
 // ---------------------- Main  For Sub-Task 2 ----------------------
 
@@ -380,7 +362,7 @@ void initialiseAsDefaultDiagonalLine(icon &thisIcon)
 
 // int main() {
 //     pixel aPixel(3.9,4.1,7);
-//     showPixelDetail(aPixel);
+//     aPixel.printPixel();
 // }
 
 // ---------------------- Main  For Sub-Task 4 ----------------------
@@ -405,7 +387,7 @@ void initialiseAsDefaultDiagonalLine(icon &thisIcon)
 //     }
 //     icon myIcon(7,pixelArray);
 //     delete[] pixelArray;
-//     showIconDetail(&myIcon);
+//     myIcon.showIconDetail();
 //     return 0;
 // }
 
@@ -413,8 +395,7 @@ void initialiseAsDefaultDiagonalLine(icon &thisIcon)
 
 // int main() {
 //     icon myIcon;
-//     initialiseAsDefaultDiagonalLine(myIcon);
-//     showIconDetail(&myIcon);
+//     myIcon.showIconDetail();
 //     return 0;
 // }
 
@@ -427,25 +408,25 @@ int main()
 
     icon allTheIcons[500];
 
-    initialiseAsDefaultDiagonalLine(allTheIcons[0]);
-
     Display1.addIcon(&allTheIcons[0]);
 
     Display2.addIcon(&allTheIcons[0]);
 
-    Display1.displayIcon(0);
+    allTheIcons[0].showIconDetail();
 
-    Display2.displayIcon(0);
+    cout << "-------------------" << endl;
+
+    Display1.displayIcon(7);
+
+    Display2.displayIcon(7);
 
     cout << "-------------------" << endl; // extra testing follows
 
-    Display1.removeIcon(0);
+    Display1.removeIcon(7);
 
-    Display1.displayIcon(0);
+    Display1.displayIcon(7);
 
-    Display1.removeIcon(1);
-
-    Display1.addIcon(&allTheIcons[0]);
+    Display1.removeIcon(7);
 
     return 0;
 }
