@@ -2,6 +2,10 @@
 
 using namespace std;
 
+// ---------------------- Class Declarations ----------------------
+
+// a simple class to represent a pixel, with x and y coordinates and brightness
+// copyright Joel Chiappetti
 class pixel
 {
 private:
@@ -10,51 +14,63 @@ private:
     unsigned char brightness;
 
 public:
-    pixel(const float _xCoordinate,const float _yCoordinate,const unsigned char _brightness); // constructor
-    ~pixel();                                                        // destructor
-    pixel(const pixel &other);                                       // copy constructor
-    pixel &operator=(const pixel &other);                            // copy assignment operator
-    pixel() : xCoordinate(0), yCoordinate(0), brightness(0) {}       // default constructor
+    pixel(const float _xCoordinate, const float _yCoordinate, const unsigned char _brightness); // constructor
+    ~pixel();                                                                                   // destructor
+    pixel(const pixel &other);                                                                  // copy constructor
+    pixel &operator=(const pixel &other);                                                       // copy assignment operator
+    pixel() : xCoordinate(0), yCoordinate(0), brightness(0) {}                                  // default constructor
 
-    void changeCoordinate(const float _xCoordinate,const float _yCoordinate);
-
+    // setters
+    void changeCoordinate(const float _xCoordinate, const float _yCoordinate);
     void changeBrightness(const unsigned char _brightness);
 
+    // getters
     float getXCoordinate();
-
     float getYCoordinate();
-
     char getBrightness();
 
-    void printPixel();
+    // display function
+    void showPixelDetail();
 };
 
+// a class to represent an icon, with an id and an array of 16 pixels
+// functions include changing the icon and displaying the icon
+// default icon is a diagonal line
+// copyright Joel Chiappetti
 class icon
 {
 private:
     int id;
     pixel IconPixel[16];
 
+    // a function to initialise the icon as a diagonal line
     void initialiseAsDefaultDiagonalLine();
+
 public:
-    icon(const int _id, pixel _IconPixel[16]); // constructor
-    ~icon();                             // destructor
-    icon(const icon &other);             // copy constructor
-    icon &operator=(const icon &other);  // copy assignment operator
-    icon() {initialiseAsDefaultDiagonalLine();}                   // default constructor
+    icon(const int _id, pixel _IconPixel[16]);    // constructor
+    ~icon();                                      // destructor
+    icon(const icon &other);                      // copy constructor
+    icon &operator=(const icon &other);           // copy assignment operator
+    icon() { initialiseAsDefaultDiagonalLine(); } // default constructor - initialises as a diagonal line
 
+    // getters
     int getId();
-
+    pixel *getPixelArray();
     pixel getSpecifiedPixel(unsigned const char _pixelIndex);
 
+    // setters
     void changeIcon(const int _id, pixel _IconPixel[16]);
-
     void changeSinglePixel(unsigned const char _pixelIndex, pixel *_IconPixel);
 
+    // display functions
     void showIconDetail();
-
 };
 
+// a class to represent a radar display, with an array of pointers to icons
+// functions include adding and removing icon pointers, and displaying an icon
+// the display can hold up to 100 icons
+// the display can only hold one icon with a given id
+// copyright Joel Chiappetti
 class radarDisplay
 {
 private:
@@ -67,18 +83,21 @@ public:
     radarDisplay(const radarDisplay &other);            // copy constructor
     radarDisplay &operator=(const radarDisplay &other); // copy assignment operator
 
+    // setters
     void addIcon(icon *_iconToAdd);
 
-    void removeIcon(const int _iconId);
+    // getters
+    icon getIcon(const int _iconId);
 
+    // display functions
     void displayIcon(const int _iconId);
+
+    // other functions
+    void removeIcon(const int _iconId);
 };
 
-// ---------------------- Function Prototypes ----------------------
-void initialiseAsDefaultDiagonalLine(icon &thisIcon);
-
 // ---------------------- Big Fours ----------------------
-pixel::pixel(const float _xCoordinate,const float _yCoordinate,const unsigned char _brightness)
+pixel::pixel(const float _xCoordinate, const float _yCoordinate, const unsigned char _brightness)
 {
     xCoordinate = _xCoordinate;
     yCoordinate = _yCoordinate;
@@ -204,7 +223,7 @@ char pixel::getBrightness()
     return brightness;
 }
 
-void pixel::printPixel()
+void pixel::showPixelDetail()
 {
     cout << "xCoordinate: " << xCoordinate << endl;
     cout << "yCoordinate: " << yCoordinate << endl;
@@ -216,6 +235,11 @@ void pixel::printPixel()
 int icon::getId()
 {
     return id;
+}
+
+pixel *icon::getPixelArray()
+{
+    return IconPixel;
 }
 
 pixel icon::getSpecifiedPixel(unsigned const char _pixelIndex)
@@ -243,7 +267,7 @@ void icon::showIconDetail()
     for (int i = 0; i < 16; i++)
     {
         cout << "Pixel " << i << endl;
-        IconPixel[i].printPixel();
+        IconPixel[i].showPixelDetail();
     }
 }
 
@@ -289,6 +313,39 @@ void radarDisplay::addIcon(icon *_iconToAdd)
     }
 }
 
+icon radarDisplay::getIcon(const int _iconId)
+{
+    // Check if there are any active icons
+    if (noOfActiveIcons <= 0)
+    {
+        cout << "ERROR - CANNOT GET ICON    : No active icons" << endl;
+        noOfActiveIcons = 0;
+        return icon();
+    }
+    bool iconFound = false;
+
+    // Find the icon
+    for (int i = 0; i < 100; i++)
+    {
+        if (iconsToDisplay[i] != NULL && iconsToDisplay[i]->getId() == _iconId)
+        {
+            iconFound = true;
+            return *iconsToDisplay[i];
+        }
+    }
+
+    // If no icon is found
+    if (!iconFound)
+    {
+        cout << "ERROR - CANNOT GET ICON    : Icon not found" << endl;
+        return icon();
+    }
+
+    // unknown error
+    cout << "ERROR - CANNOT GET ICON    : Unknown error" << endl;
+    return icon();
+}
+
 void radarDisplay::removeIcon(const int _iconId)
 {
     // Check if there are any active icons
@@ -301,15 +358,12 @@ void radarDisplay::removeIcon(const int _iconId)
     bool iconFound = false;
     for (int i = 0; i < 100; i++)
     {
-        if (iconsToDisplay != NULL)
+        if (iconsToDisplay[i] != NULL && iconsToDisplay[i]->getId() == _iconId)
         {
-            if (iconsToDisplay[i] != NULL && iconsToDisplay[i]->getId() == _iconId)
-            {
-                iconsToDisplay[i] = NULL;
-                iconFound = true;
-                noOfActiveIcons--;
-                break;
-            }
+            iconsToDisplay[i] = NULL;
+            iconFound = true;
+            noOfActiveIcons--;
+            break;
         }
     }
 
@@ -349,43 +403,46 @@ void radarDisplay::displayIcon(const int _iconId)
     }
 }
 
-
 // ---------------------- Main  For Sub-Task 2 ----------------------
 
-// int main() {
-//     pixel aPixel(3.9,4.1,7);
-//     aPixel.printPixel();
+// int main()
+// {
+//     pixel aPixel(3.9, 4.1, 7);
+//     aPixel.showPixelDetail();
 //     return 0;
 // }
 
 // ---------------------- Main  For Sub-Task 3 ----------------------
 
-// int main() {
-//     pixel aPixel(3.9,4.1,7);
-//     aPixel.printPixel();
+// int main()
+// {
+//     pixel aPixel(3.9, 4.1, 7);
+//     aPixel.showPixelDetail();             // as this is a member function, it doesn't need to be passed an instance of pixel
+//     return 0;
 // }
 
 // ---------------------- Main  For Sub-Task 4 ----------------------
 
-// int main() {
-//     pixel* pixelArray = new pixel[16];
-//     icon myIcon(7, pixelArray);
-//     pixel pixelOne(3.9,4.1,7);
-//     myIcon.changeSinglePixel(0, &pixelOne);
-//     myIcon.printIcon();
-//     delete[] pixelArray;
+// int main()
+// {
+//     icon myIcon;
+//     pixel pixelOne(3.9, 4.1, 7);
+//     myIcon.getPixelArray()[0] = pixelOne; // copy pixelOne into pixelArray[0]
+//     // myIcon.changeSinglePixel(0,&pixelOne);    //alternatively
+//     myIcon.showIconDetail();
 //     return 0;
 // }
 
 // ---------------------- Main  For Sub-Task 5 ----------------------
 
-// int main() {
-//     pixel* pixelArray = new pixel[16];
+// int main()
+// {
+//     pixel *pixelArray = new pixel[16];
 //     for (size_t i = 0; i < 16; i++)
 //     {
-//         pixelArray[i] = pixel(i,i,15);
+//         pixelArray[i] = pixel(i, i, 15);
 //     }
-//     icon myIcon(7,pixelArray);
+//     icon myIcon(7, pixelArray);
 //     delete[] pixelArray;
 //     myIcon.showIconDetail();
 //     return 0;
@@ -393,8 +450,9 @@ void radarDisplay::displayIcon(const int _iconId)
 
 // ---------------------- Main  For Sub-Task 6 ----------------------
 
-// int main() {
-//     icon myIcon;
+// int main()
+// {
+//     icon myIcon; // the default constructor calls a function 'initialiseAsDefaultDiagonalLine'
 //     myIcon.showIconDetail();
 //     return 0;
 // }
@@ -408,25 +466,35 @@ int main()
 
     icon allTheIcons[500];
 
-    Display1.addIcon(&allTheIcons[0]);
+    cout << "-------------------" << endl;// set up the tests
+
+    allTheIcons[0].showIconDetail();// this shows the default icon
+
+    Display1.addIcon(&allTheIcons[0]);// this adds the default icon to the display
 
     Display2.addIcon(&allTheIcons[0]);
 
-    allTheIcons[0].showIconDetail();
+    cout << "-------------------" << endl; // display the icons
 
-    cout << "-------------------" << endl;
-
-    Display1.displayIcon(7);
+    Display1.displayIcon(7);// this displays the default icon
 
     Display2.displayIcon(7);
 
-    cout << "-------------------" << endl; // extra testing follows
+    cout << "-------------------" << endl; // test the remove function
 
-    Display1.removeIcon(7);
+    Display1.removeIcon(7);// this removes the default icon from the display
 
-    Display1.displayIcon(7);
+    Display1.displayIcon(7);// this should give an error message
 
-    Display1.removeIcon(7);
+    Display1.removeIcon(7);// this should also give an error message
+
+    cout << "-------------------" << endl; // make sure that changing an icon changes the icon within the display
+
+    allTheIcons[0].changeIcon(4, allTheIcons[0].getPixelArray());// this changes the icon id to 4
+
+    Display2.displayIcon(7);// this should give an error as the id has been changed
+
+    Display2.displayIcon(4);// this should display the icon
 
     return 0;
 }
