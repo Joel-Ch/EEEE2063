@@ -2,16 +2,32 @@
 
 using namespace std;
 
+// ----------------------------------------------------------------
+//
+//                     Radar Display Project
+//
+//              Including Pixel, Icon and Radar Display objects
+//
+//              (Along with rigorous test mains)
+//
+//              Copyright Joel Chiappetti
+//
+// ----------------------------------------------------------------
+
+// NOTE TO MARKER: Sub Tasks 3 \& 6 have two separate implementations, both as member functions and external functions.
+
 // ---------------------- Class Declarations ----------------------
 
 // a simple class to represent a pixel, with x and y coordinates and brightness
+// included are get and set functions to view and change the data held within
+// requires <iostream>
 // copyright Joel Chiappetti
 class pixel
 {
 private:
     float xCoordinate;
     float yCoordinate;
-    unsigned char brightness;
+    unsigned char brightness; // 0-20
 
 public:
     pixel(const float _xCoordinate, const float _yCoordinate, const unsigned char _brightness); // constructor
@@ -20,22 +36,23 @@ public:
     pixel &operator=(const pixel &other);                                                       // copy assignment operator
     pixel() : xCoordinate(0), yCoordinate(0), brightness(0) {}                                  // default constructor
 
-    // setters
-    void changeCoordinate(const float _xCoordinate, const float _yCoordinate);
-    void changeBrightness(const unsigned char _brightness);
-
     // getters
     float getXCoordinate();
     float getYCoordinate();
-    char getBrightness();
+    unsigned char getBrightness();
+
+    // setters
+    void changeCoordinate(const float _xCoordinate, const float _yCoordinate);
+    void changeBrightness(const unsigned char _brightness);
 
     // display function
     void showPixelDetail();
 };
 
 // a class to represent an icon, with an id and an array of 16 pixels
-// functions include changing the icon and displaying the icon
+// functions include standard getters and setters, along with changing the icon and displaying the icon
 // default icon is a diagonal line
+// requires <iostream>
 // copyright Joel Chiappetti
 class icon
 {
@@ -70,6 +87,8 @@ public:
 // functions include adding and removing icon pointers, and displaying an icon
 // the display can hold up to 100 icons
 // the display can only hold one icon with a given id
+// featuring exhaustive error checking
+// requires <iostream>
 // copyright Joel Chiappetti
 class radarDisplay
 {
@@ -83,11 +102,11 @@ public:
     radarDisplay(const radarDisplay &other);            // copy constructor
     radarDisplay &operator=(const radarDisplay &other); // copy assignment operator
 
-    // setters
-    void addIcon(icon *_iconToAdd);
-
     // getters
     icon getIcon(const int _iconId);
+
+    // setters
+    void addIcon(icon *_iconToAdd);
 
     // display functions
     void displayIcon(const int _iconId);
@@ -96,12 +115,34 @@ public:
     void removeIcon(const int _iconId);
 };
 
+// ---------------------- Functions ----------------------
+
+// function to display a pixels values on screen
+// inputs: the pixel to display
+// outputs: prints xcoordinate, ycoordinate and brightness to the terminal
+// requires: <iostream>
+void showAPixelsDetail(pixel ThisPixel);
+
+// function to initialise an icon with a diagonal line
+// inputs: a pointer to the icon to initialise
+// outputs: changes the icon
+// requires: <iostream> (for debugging)
+void InitialiseAsDefaultDiagonalLine(icon *_iconToInitialise);
+
 // ---------------------- Big Fours ----------------------
 pixel::pixel(const float _xCoordinate, const float _yCoordinate, const unsigned char _brightness)
 {
+    if (_brightness < 0 || _brightness > 20)
+    {
+        cout << "ERROR - CANNOT CHANGE BRIGHTNESS: Invalid brightness value" << endl;
+        return;
+    }
+    else
+    {
+        brightness = _brightness;
+    }
     xCoordinate = _xCoordinate;
     yCoordinate = _yCoordinate;
-    brightness = _brightness;
 }
 
 pixel::~pixel()
@@ -197,7 +238,7 @@ void pixel::changeCoordinate(const float _xCoordinate, const float _yCoordinate)
 
 void pixel::changeBrightness(const unsigned char _brightness)
 {
-    if (_brightness < 0 || _brightness > 15)
+    if (_brightness < 0 || _brightness > 20)
     {
         cout << "ERROR - CANNOT CHANGE BRIGHTNESS: Invalid brightness value" << endl;
         return;
@@ -218,7 +259,7 @@ float pixel::getYCoordinate()
     return yCoordinate;
 }
 
-char pixel::getBrightness()
+unsigned char pixel::getBrightness()
 {
     return brightness;
 }
@@ -403,6 +444,28 @@ void radarDisplay::displayIcon(const int _iconId)
     }
 }
 
+// ---------------------- External Functions ----------------------
+
+void showAPixelsDetail(pixel ThisPixel)
+{
+    cout << "xCoordinate: " << ThisPixel.getXCoordinate() << endl;
+    cout << "yCoordinate: " << ThisPixel.getYCoordinate() << endl;
+    cout << "brightness: " << (int)ThisPixel.getBrightness() << endl;
+}
+
+void InitialiseAsDefaultDiagonalLine(icon *_iconToInitialise)
+{
+    pixel *pixelArray = new pixel[16];
+    for (size_t i = 0; i < 16; i++)
+    {
+        pixelArray[i] = pixel(i, i, 15);
+    }
+    _iconToInitialise->changeIcon(7, pixelArray);
+
+    delete[] pixelArray;
+    return;
+}
+
 // ---------------------- Main  For Sub-Task 2 ----------------------
 
 // int main()
@@ -414,10 +477,23 @@ void radarDisplay::displayIcon(const int _iconId)
 
 // ---------------------- Main  For Sub-Task 3 ----------------------
 
+// (This version uses a member function)
+
 // int main()
 // {
 //     pixel aPixel(3.9, 4.1, 7);
 //     aPixel.showPixelDetail();             // as this is a member function, it doesn't need to be passed an instance of pixel
+//     return 0;
+// }
+
+// ---------------------- Alternative Main for Sub-Task 3 -----------
+
+// (This version uses an external function)
+
+// int main()
+// {
+//     pixel aPixel(3.9, 4.1, 7);
+//     showAPixelsDetail(aPixel);
 //     return 0;
 // }
 
@@ -450,9 +526,23 @@ void radarDisplay::displayIcon(const int _iconId)
 
 // ---------------------- Main  For Sub-Task 6 ----------------------
 
+// (This version uses a member function)
+
 // int main()
 // {
 //     icon myIcon; // the default constructor calls a function 'initialiseAsDefaultDiagonalLine'
+//     myIcon.showIconDetail();
+//     return 0;
+// }
+
+// ---------------------- Alternative Main  For Sub-Task 6 ----------
+
+// (This version uses an external function)
+
+// int main()
+// {
+//     icon myIcon;
+//     InitialiseAsDefaultDiagonal(&myIcon); // this is an external function, but achieves the same result as above
 //     myIcon.showIconDetail();
 //     return 0;
 // }
@@ -466,35 +556,35 @@ int main()
 
     icon allTheIcons[500];
 
-    cout << "-------------------" << endl;// set up the tests
+    cout << "-------------------" << endl; // set up the tests
 
-    allTheIcons[0].showIconDetail();// this shows the default icon
+    allTheIcons[0].showIconDetail(); // this shows the default icon
 
-    Display1.addIcon(&allTheIcons[0]);// this adds the default icon to the display
+    Display1.addIcon(&allTheIcons[0]); // this adds the default icon to the display
 
     Display2.addIcon(&allTheIcons[0]);
 
     cout << "-------------------" << endl; // display the icons
 
-    Display1.displayIcon(7);// this displays the default icon
+    Display1.displayIcon(7); // this displays the default icon
 
     Display2.displayIcon(7);
 
     cout << "-------------------" << endl; // test the remove function
 
-    Display1.removeIcon(7);// this removes the default icon from the display
+    Display1.removeIcon(7); // this removes the default icon from the display
 
-    Display1.displayIcon(7);// this should give an error message
+    Display1.displayIcon(7); // this should give an error message
 
-    Display1.removeIcon(7);// this should also give an error message
+    Display1.removeIcon(7); // this should also give an error message
 
     cout << "-------------------" << endl; // make sure that changing an icon changes the icon within the display
 
-    allTheIcons[0].changeIcon(4, allTheIcons[0].getPixelArray());// this changes the icon id to 4
+    allTheIcons[0].changeIcon(4, allTheIcons[0].getPixelArray()); // this changes the icon id to 4
 
-    Display2.displayIcon(7);// this should give an error as the id has been changed
+    Display2.displayIcon(7); // this should give an error as the id has been changed
 
-    Display2.displayIcon(4);// this should display the icon
+    Display2.displayIcon(4); // this should display the icon
 
     return 0;
 }
