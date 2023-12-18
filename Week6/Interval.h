@@ -7,6 +7,7 @@ using namespace std;
 /**
  * @brief The interval class represents a mathematical interval.
  * It stores the lower and upper bounds of the interval.
+ * Copyright Joel Chiappetti
  */
 class interval
 {
