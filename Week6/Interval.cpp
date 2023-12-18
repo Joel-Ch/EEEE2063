@@ -2,14 +2,24 @@
 
 interval::interval(float l, float h)
 {
-    low = l;
-    high = h;
+    // Make sure that the lower bound is always less than or equal to the upper bound.
+    if (l > h)
+    {
+        low = h;
+        high = l;
+    }
+    else
+    {
+        low = l;
+        high = h;
+    }
 }
 
 interval::interval(float number)
 {
-    low = number - 1;
-    high = number + 1;
+    // Set the lower bound to number - 0.1 and the upper bound to number + 0.1.
+    low = number - 0.1;
+    high = number + 0.1;
 }
 
 interval::interval(const interval &i)
