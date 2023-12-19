@@ -26,7 +26,7 @@ public:
 
     /**
      * @brief Constructs an interval object with a single number.
-     * The lower bound is set to number - 1 and the upper bound is set to number + 1.
+     * The lower bound is set to number - 0.1 and the upper bound is set to number + 0.1.
      *
      * @param number The number to create the interval from.
      */
