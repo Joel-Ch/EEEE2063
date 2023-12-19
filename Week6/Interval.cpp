@@ -81,7 +81,7 @@ interval interval::operator/(const interval &i) const
     return temp;
 }
 
-#include <cmath>
+#include <cmath> // For pow() function.
 interval interval::operator^(const interval &i) const
 {
     interval temp;
@@ -92,11 +92,11 @@ interval interval::operator^(const interval &i) const
 
 ostream &operator<<(ostream &os, const interval &i)
 {
-    os << "[" << i.low << ", " << i.high << "]";
+    os << "[" << i.low << ", " << i.high << "]";  // Print the interval in the format [low, high].
     return os;
 }
 
-istream &operator>>(istream &is, interval &i)
+istream &operator>>(istream &is, interval &i) // Read the interval in the format low high
 {
     is >> i.low >> i.high;
     return is;
