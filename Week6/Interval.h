@@ -12,7 +12,8 @@ using namespace std;
 class interval
 {
 private:
-    float low, high; // Lower and upper bounds of the interval
+    float low;  // Lower bound of the interval
+    float high; // Upper bound of the interval
 
 public:
     /**
